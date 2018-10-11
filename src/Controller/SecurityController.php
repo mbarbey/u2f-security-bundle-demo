@@ -8,7 +8,6 @@ use Samyoul\U2F\U2FServer\U2FServer;
 use Symfony\Component\HttpFoundation\Request;
 use App\Form\U2fRegistrationType;
 use App\Model\U2fRegistration;
-use Symfony\Component\Form\FormError;
 use App\Entity\Key;
 
 class SecurityController extends AbstractController
