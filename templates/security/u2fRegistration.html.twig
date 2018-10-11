@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>U2F registration</h1>
+    {{ form_start(form) }}
+    {{ form_rest(form) }}
+    <button type="submit">submit</button>
+    {{ form_end(form) }}
+    
+    {{ dump(jsRequest) }}
+    
+    {% if error %}
+        {{ dump(error) }}
+    {% endif %}
+    
+{% endblock %}
+
+
+{% block javascripts %}
+    <script src="{{ asset('u2f.js') }}"></script>
+    {#<script src="https://raw.githubusercontent.com/Yubico/java-u2flib-server/master/u2flib-server-demo/src/main/resources/assets/u2f-api-1.1.js"></script>#}
+    {#<scirpt src="https://raw.githubusercontent.com/mastahyeti/u2f-api/master/u2f-api-polyfill.js"></scirpt>#}
+    {#<script src="https://raw.githubusercontent.com/google/u2f-ref-code/master/u2f-gae-demo/war/js/u2f-api.js"></script>#}
+    <script type="text/javascript">
+        setTimeout(function() {
+        // A magic JS function that talks to the USB device. This function will keep polling for the USB device until it finds one.
+        u2f.register("{{ jsRequest.appId }}", [{version: "{{jsRequest.version}}", challenge: "{{ jsRequest.challenge }}"}], {{ jsSignatures|raw }}, function(data) {
+            // Handle returning error data
+            if(data.errorCode && data.errorCode != 0) {
+                alert("registration failed with error: " + data.errorCode);
+                // Or handle the error however you'd like. 
+                return;
+            }
+    
+            // On success process the data from USB device to send to the server
+            var registration_response = data;
+            
+            // Get the form items so we can send data back to the server
+            var form = document.getElementsByTagName('form')[0];
+            var response = document.getElementById('{{ form.response.vars.id }}');
+            
+            // Fill and submit form.
+            response.value = JSON.stringify(registration_response);
+            form.submit();
+        });
+    }, 1000);
+    </script>
+{% endblock %}

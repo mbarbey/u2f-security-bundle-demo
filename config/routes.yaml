@@ -16,3 +16,7 @@ user_list:
 user_create:
     path: /user/create
     controller: App\Controller\UserController:create
+
+user_register_u2f:
+    path: /user/register_key
+    controller: App\Controller\SecurityController:u2fRegistration
