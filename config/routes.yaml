@@ -1,0 +1,18 @@
+login:
+    path: /login
+    controller: App\Controller\SecurityController:login
+
+logout:
+    path: /logout
+
+home:
+    path: /
+    controller: App\Controller\HomeController:index
+
+user_list:
+    path: /users
+    controller: App\Controller\UserController:index
+
+user_create:
+    path: /user/create
+    controller: App\Controller\UserController:create
