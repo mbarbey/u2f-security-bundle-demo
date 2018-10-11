@@ -20,3 +20,7 @@ user_create:
 user_register_u2f:
     path: /user/register_key
     controller: App\Controller\SecurityController:u2fRegistration
+
+user_authenticate_u2f:
+    path: /user/authenticate_key
+    controller: App\Controller\SecurityController:u2fAuthentication

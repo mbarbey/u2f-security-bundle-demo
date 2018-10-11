@@ -31,22 +31,22 @@ class Key
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $keyHandle;
+    public $keyHandle;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $publicKey;
+    public $publicKey;
 
     /**
      * @ORM\Column(type="text")
      */
-    private $certificate;
+    public $certificate;
 
     /**
      * @ORM\Column(type="integer")
      */
-    private $counter;
+    public $counter;
 
     public function getId(): ?int
     {
