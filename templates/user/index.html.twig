@@ -12,7 +12,7 @@
         {% for user in users %}
             <tr>
                 <td>{{ user.username }}</td>
-                <td>{{ user.u2fKeys|length }}</td>
+                <td>{{ user.u2fKeys|length }}{% if user.u2fKeys %}<a href="{{ path('user_keys', {'userId': user.id}) }}">See</a>{% endif %}</td>
             </tr>
         {% endfor %}
     </tbody>

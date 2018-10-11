@@ -48,6 +48,11 @@ class User implements UserInterface, \Serializable
         $this->u2fKeys = new ArrayCollection();
     }
 
+    public function getId()
+    {
+        return $this->id;
+    }
+
     public function getUsername()
     {
         return $this->username;
