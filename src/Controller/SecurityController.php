@@ -11,6 +11,7 @@ use App\Model\U2fRegistration;
 use App\Entity\Key;
 use App\Model\U2fAuthentication;
 use App\Form\U2fAuthenticationType;
+use Samyoul\U2F\U2FServer\U2FException;
 
 class SecurityController extends AbstractController
 {
@@ -43,6 +44,12 @@ class SecurityController extends AbstractController
                 $u2fResponse = (object)json_decode($registration->getResponse(), true);
 
                 $validatedRegistration = U2FServer::register($u2fRequest, $u2fResponse);
+                foreach ($this->getUser()->getU2fKeys() as $existingKey) {
+                    if ($existingKey->getCertificate() == $validatedRegistration->getCertificate()) {
+                        throw new U2FException('Key already registered', 4);
+                    }
+                }
+
                 $key = new Key();
                 $key->setUser($this->getUser());
                 $key->setCertificate($validatedRegistration->getCertificate());
@@ -63,13 +70,12 @@ class SecurityController extends AbstractController
                     'error' => $e
                 ];
             }
-        } else {
-            $registrationData = U2FServer::makeRegistration($appId);
-            $request->getSession()->set('registrationRequest', $registrationData['request']);
-
-            $jsRequest = $registrationData['request'];
-            $jsSignatures = json_encode($registrationData['signatures']);
         }
+        $registrationData = U2FServer::makeRegistration($appId);
+        $request->getSession()->set('registrationRequest', $registrationData['request']);
+
+        $jsRequest = $registrationData['request'];
+        $jsSignatures = json_encode($registrationData['signatures']);
 
         return $this->render('security/u2fRegistration.html.twig', array(
             'jsRequest' => $jsRequest,
