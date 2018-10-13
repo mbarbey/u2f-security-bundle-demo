@@ -4,8 +4,9 @@
 namespace App\Model;
 
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Model\U2fRegistration\U2fRegistration as Base;
 
-class U2fRegistration
+class U2fRegistration extends Base
 {
     /**
      * @Assert\NotBlank()
@@ -13,24 +14,11 @@ class U2fRegistration
     private $name;
 
     /**
-     * @Assert\NotBlank()
-     */
-    private $response;
-
-    /**
-     * @return mixed
+     * @return string
      */
     public function getName()
     {
         return $this->name;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getResponse()
-    {
-        return $this->response;
     }
 
     /**
@@ -39,16 +27,6 @@ class U2fRegistration
     public function setName($name)
     {
         $this->name = $name;
-
-        return $this;
-    }
-
-    /**
-     * @param mixed $response
-     */
-    public function setResponse($response)
-    {
-        $this->response = $response;
 
         return $this;
     }

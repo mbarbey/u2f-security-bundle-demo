@@ -10,16 +10,23 @@ use Symfony\Component\HttpKernel\KernelEvents;
 use App\Entity\User;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use App\Event\Authentication\U2fAuthenticationRequiredEvent;
 
 class U2fSubscriber implements EventSubscriberInterface
 {
     const U2F_SECURITY_KEY = 'u2f_must_validate';
 
     private $router;
+    private $session;
+    private $dispatcher;
 
-    public function __construct(RouterInterface $router)
+    public function __construct(RouterInterface $router, SessionInterface $session, EventDispatcherInterface $dispatcher)
     {
         $this->router = $router;
+        $this->session = $session;
+        $this->dispatcher = $dispatcher;
     }
 
     public function onSecurityInteractiveLogin(InteractiveLoginEvent $event)
@@ -27,6 +34,7 @@ class U2fSubscriber implements EventSubscriberInterface
         $user = $event->getAuthenticationToken()->getUser();
         if ($user instanceof User && $user->getU2fKeys()->count()) {
             $event->getRequest()->getSession()->set(static::U2F_SECURITY_KEY, true);
+            $this->dispatcher->dispatch(U2fAuthenticationRequiredEvent::getName(), new U2fAuthenticationRequiredEvent($user));
         }
     }
 
@@ -63,7 +71,7 @@ class U2fSubscriber implements EventSubscriberInterface
     {
         return [
             SecurityEvents::INTERACTIVE_LOGIN => 'onSecurityInteractiveLogin',
-            KernelEvents::REQUEST => 'onKernelRequest',
+            KernelEvents::REQUEST => 'onKernelRequest'
         ];
     }
 }

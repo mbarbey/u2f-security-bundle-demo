@@ -7,12 +7,13 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
+use App\Model\User\U2fUser;
 
 /**
  * @ORM\Table(name="app_users")
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  */
-class User implements UserInterface, \Serializable
+class User extends U2fUser implements UserInterface, \Serializable
 {
     /**
      * @ORM\Column(type="integer")
@@ -37,16 +38,6 @@ class User implements UserInterface, \Serializable
      * @ORM\Column(type="string", length=64)
      */
     private $password;
-
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Key", mappedBy="user", orphanRemoval=true)
-     */
-    private $u2fKeys;
-
-    public function __construct()
-    {
-        $this->u2fKeys = new ArrayCollection();
-    }
 
     /**
      * @return int
@@ -165,44 +156,5 @@ class User implements UserInterface, \Serializable
             $this->username,
             $this->password,
         ) = unserialize($serialized, array('allowed_classes' => false));
-    }
-
-    /**
-     * @return Collection|Key[]
-     */
-    public function getU2fKeys(): Collection
-    {
-        return $this->u2fKeys;
-    }
-
-    /**
-     * @param Key $u2fKey
-     * @return self
-     */
-    public function addU2fKey(Key $u2fKey): self
-    {
-        if (!$this->u2fKeys->contains($u2fKey)) {
-            $this->u2fKeys[] = $u2fKey;
-            $u2fKey->setUser($this);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param Key $u2fKey
-     * @return self
-     */
-    public function removeU2fKey(Key $u2fKey): self
-    {
-        if ($this->u2fKeys->contains($u2fKey)) {
-            $this->u2fKeys->removeElement($u2fKey);
-            // set the owning side to null (unless already changed)
-            if ($u2fKey->getUser() === $this) {
-                $u2fKey->setUser(null);
-            }
-        }
-
-        return $this;
     }
 }

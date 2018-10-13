@@ -3,30 +3,8 @@
 
 namespace App\Model;
 
-use Symfony\Component\Validator\Constraints as Assert;
+use App\Model\U2fAuthentication\U2fAuthentication as Base;
 
-class U2fAuthentication
+class U2fAuthentication extends Base
 {
-    /**
-     * @Assert\NotBlank()
-     */
-    private $response;
-
-    /**
-     * @return mixed
-     */
-    public function getResponse()
-    {
-        return $this->response;
-    }
-
-    /**
-     * @param mixed $response
-     */
-    public function setResponse($response)
-    {
-        $this->response = $response;
-
-        return $this;
-    }
 }

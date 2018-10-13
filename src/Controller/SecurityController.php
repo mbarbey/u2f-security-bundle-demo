@@ -13,6 +13,7 @@ use App\Model\U2fAuthentication;
 use App\Form\U2fAuthenticationType;
 use Samyoul\U2F\U2FServer\U2FException;
 use App\EventSubscriber\U2fSubscriber;
+use App\Service\U2fSecurity;
 
 class SecurityController extends AbstractController
 {
@@ -30,9 +31,12 @@ class SecurityController extends AbstractController
         ));
     }
 
-    public function u2fRegistration(Request $request)
+    public function u2fRegistration(Request $request, U2fSecurity $service)
     {
-        $appId = $request->getScheme() . '://' . $request->getHttpHost();
+        $canRegister = $service->canRegister($this->getUser(), $request->getSchemeAndHttpHost());
+        if ($canRegister->isAborted()) {
+            return $this->redirectToRoute('user_list');
+        }
 
         $registration = new U2fRegistration();
         $form = $this->createForm(U2fRegistrationType::class, $registration);
@@ -41,23 +45,9 @@ class SecurityController extends AbstractController
         $error = null;
         if ($form->isSubmitted() && $form->isValid()) {
             try {
-                $u2fRequest = $request->getSession()->get('registrationRequest');
-                $u2fResponse = (object)json_decode($registration->getResponse(), true);
-
-                $validatedRegistration = U2FServer::register($u2fRequest, $u2fResponse);
-                foreach ($this->getUser()->getU2fKeys() as $existingKey) {
-                    if ($existingKey->getCertificate() == $validatedRegistration->getCertificate()) {
-                        throw new U2FException('Key already registered', 4);
-                    }
-                }
-
-                $key = new Key();
-                $key->setUser($this->getUser());
-                $key->setCertificate($validatedRegistration->getCertificate());
-                $key->setCounter($validatedRegistration->getCounter());
-                $key->setKeyHandle($validatedRegistration->getKeyHandle());
-                $key->setName($registration->getName());
-                $key->setPublicKey($validatedRegistration->getPublicKey());
+                $key = $service->validateRegistration($this->getUser(), $registration);
+                $key->setName($registration->getName())
+                    ->setUser($this->getUser());
 
                 $em = $this->getDoctrine()->getManager();
                 $em->persist($key);
@@ -66,30 +56,23 @@ class SecurityController extends AbstractController
                 return $this->redirectToRoute('user_list');
             } catch (\Exception $e) {
                 $error = [
-                    'request' => $u2fRequest,
-                    'response' => $u2fResponse,
                     'error' => $e
                 ];
             }
         }
-        $registrationData = U2FServer::makeRegistration($appId);
-        $request->getSession()->set('registrationRequest', $registrationData['request']);
 
-        $jsRequest = $registrationData['request'];
-        $jsSignatures = json_encode($registrationData['signatures']);
+        $registrationData = $service->createRegistration($request->getSchemeAndHttpHost());
 
         return $this->render('security/u2fRegistration.html.twig', array(
-            'jsRequest' => $jsRequest,
-            'jsSignatures' => $jsSignatures,
+            'jsRequest' => $registrationData['request'],
+            'jsSignatures' => $registrationData['signatures'],
             'form' => $form->createView(),
             'error' => $error
         ));
     }
 
-    public function u2fAuthentication(Request $request)
+    public function u2fAuthentication(Request $request, U2fSecurity $service)
     {
-        $appId = $request->getSchemeAndHttpHost();
-
         $authentication = new U2fAuthentication();
         $form = $this->createForm(U2fAuthenticationType::class, $authentication);
 
@@ -97,14 +80,10 @@ class SecurityController extends AbstractController
         $error = null;
         if ($form->isSubmitted() && $form->isValid()) {
             try {
-                $validatedAuthentication = U2FServer::authenticate(
-                    $request->getSession()->get('authenticationRequest'),
-                    $this->getUser()->getU2fKeys()->toArray(),
-                    json_decode($authentication->getResponse())
-                );
+                $updatedKey = $service->validateAuthentication($this->getUser(), $authentication);
 
                 $em = $this->getDoctrine()->getManager();
-                $em->persist($validatedAuthentication);
+                $em->persist($updatedKey);
                 $em->flush();
 
                 if ($request->getSession()->has(U2fSubscriber::U2F_SECURITY_KEY)) {
@@ -114,22 +93,12 @@ class SecurityController extends AbstractController
                 return $this->redirectToRoute('user_list');
             } catch (\Exception $e) {
                 $error = [
-                    'request' => $request->getSession()->get('authenticationRequest'),
-                    'response' => $authentication,
                     'error' => $e
                 ];
             }
-        } else {
-            $authenticationRequest = U2FServer::makeAuthentication($this->getUser()->getU2fKeys()->toArray(), $appId);
-            $request->getSession()->set('authenticationRequest', $authenticationRequest);
         }
 
-        $authenticationRequest = [
-            'appId' => $appId,
-            'version' => U2FServer::VERSION,
-            'challenge' => $authenticationRequest[0]->challenge(),
-            'registeredKeys' => json_encode($authenticationRequest)
-        ];
+        $authenticationRequest = $service->createAuthentication($request->getSchemeAndHttpHost(), $this->getUser());
 
         return $this->render('security/u2fAuthentication.html.twig', array(
             'authenticationRequest' => $authenticationRequest,
