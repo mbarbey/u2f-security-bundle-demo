@@ -12,6 +12,7 @@ use App\Entity\Key;
 use App\Model\U2fAuthentication;
 use App\Form\U2fAuthenticationType;
 use Samyoul\U2F\U2FServer\U2FException;
+use App\EventSubscriber\U2fSubscriber;
 
 class SecurityController extends AbstractController
 {
@@ -87,7 +88,7 @@ class SecurityController extends AbstractController
 
     public function u2fAuthentication(Request $request)
     {
-        $appId = $request->getScheme() . '://' . $request->getHttpHost();
+        $appId = $request->getSchemeAndHttpHost();
 
         $authentication = new U2fAuthentication();
         $form = $this->createForm(U2fAuthenticationType::class, $authentication);
@@ -105,6 +106,10 @@ class SecurityController extends AbstractController
                 $em = $this->getDoctrine()->getManager();
                 $em->persist($validatedAuthentication);
                 $em->flush();
+
+                if ($request->getSession()->has(U2fSubscriber::U2F_SECURITY_KEY)) {
+                    $request->getSession()->remove(U2fSubscriber::U2F_SECURITY_KEY);
+                }
 
                 return $this->redirectToRoute('user_list');
             } catch (\Exception $e) {

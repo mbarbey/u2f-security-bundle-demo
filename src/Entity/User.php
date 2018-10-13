@@ -48,61 +48,104 @@ class User implements UserInterface, \Serializable
         $this->u2fKeys = new ArrayCollection();
     }
 
-    public function getId()
+    /**
+     * @return int
+     */
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getUsername()
+    /**
+     * {@inheritDoc}
+     * @see \Symfony\Component\Security\Core\User\UserInterface::getUsername()
+     */
+    public function getUsername(): ?string
     {
         return $this->username;
     }
 
-    public function setUsername($username)
+    /**
+     * @param string $username
+     * @return self
+     */
+    public function setUsername(string $username): self
     {
         $this->username = $username;
 
         return $this;
     }
 
-    public function getSalt()
+    /**
+     * {@inheritDoc}
+     * @see \Symfony\Component\Security\Core\User\UserInterface::getSalt()
+     */
+    public function getSalt(): ?string
     {
         return null;
     }
 
-    public function getPlainPassword()
+    /**
+     * @return string|NULL
+     */
+    public function getPlainPassword(): ?string
     {
         return $this->plainPassword;
     }
 
-    public function setPlainPassword($password)
+    /**
+     * @param string $password
+     * @return self
+     */
+    public function setPlainPassword(string $password = null): self
     {
         $this->plainPassword = $password;
+
+        return $this;
     }
 
-    public function getPassword()
+    /**
+     * {@inheritDoc}
+     * @see \Symfony\Component\Security\Core\User\UserInterface::getPassword()
+     */
+    public function getPassword(): ?string
     {
         return $this->password;
     }
 
-    public function setPassword($password)
+    /**
+     * @param string $password
+     * @return self
+     */
+    public function setPassword(string $password = null): self
     {
         $this->password = $password;
 
         return $this;
     }
 
-    public function getRoles()
+    /**
+     * {@inheritDoc}
+     * @see \Symfony\Component\Security\Core\User\UserInterface::getRoles()
+     */
+    public function getRoles(): array
     {
         return array('ROLE_USER');
     }
 
-    public function eraseCredentials()
+    /**
+     * {@inheritDoc}
+     * @see \Symfony\Component\Security\Core\User\UserInterface::eraseCredentials()
+     */
+    public function eraseCredentials(): void
     {
     }
 
-    /** @see \Serializable::serialize() */
-    public function serialize()
+    /**
+     * {@inheritDoc}
+     * @see \Serializable::serialize()
+     */
+    public function serialize(): string
     {
         return serialize(array(
             $this->id,
@@ -111,8 +154,11 @@ class User implements UserInterface, \Serializable
         ));
     }
 
-    /** @see \Serializable::unserialize() */
-    public function unserialize($serialized)
+    /**
+     * {@inheritDoc}
+     * @see \Serializable::unserialize()
+     */
+    public function unserialize($serialized): void
     {
         list (
             $this->id,
@@ -129,6 +175,10 @@ class User implements UserInterface, \Serializable
         return $this->u2fKeys;
     }
 
+    /**
+     * @param Key $u2fKey
+     * @return self
+     */
     public function addU2fKey(Key $u2fKey): self
     {
         if (!$this->u2fKeys->contains($u2fKey)) {
@@ -139,6 +189,10 @@ class User implements UserInterface, \Serializable
         return $this;
     }
 
+    /**
+     * @param Key $u2fKey
+     * @return self
+     */
     public function removeU2fKey(Key $u2fKey): self
     {
         if ($this->u2fKeys->contains($u2fKey)) {

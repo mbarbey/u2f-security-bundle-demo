@@ -3,7 +3,17 @@
     <head>
         <meta charset="UTF-8">
         <title>{% block title %}Welcome!{% endblock %}</title>
-        {% block stylesheets %}{% endblock %}
+        {% block stylesheets %}
+            <style>
+                body {
+                    background-color: #333;
+                    color: #aaa;
+                }
+                a {
+                    color: #77f;
+                }
+            </style>
+        {% endblock %}
     </head>
     <body>
         <a href="{{ path('login') }}">Login</a>
