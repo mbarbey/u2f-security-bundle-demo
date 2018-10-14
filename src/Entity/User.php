@@ -7,7 +7,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
-use App\Model\User\U2fUser;
+use Mbarbey\U2fSecurityBundle\Model\User\U2fUser;
 
 /**
  * @ORM\Table(name="app_users")

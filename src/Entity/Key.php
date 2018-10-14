@@ -3,7 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use App\Model\Key\U2fKey;
+use Mbarbey\U2fSecurityBundle\Model\Key\U2fKey;
 
 /**
  * @ORM\Table(name="app_u2fKeys")

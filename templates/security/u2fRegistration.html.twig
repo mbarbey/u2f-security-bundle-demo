@@ -2,21 +2,13 @@
 
 {% block body %}
     <h1>U2F authentication</h1>
-    {{ form_start(form) }}
-    {{ form_rest(form) }}
-    {{ form_end(form) }}
-    
-    {{ dump(jsRequest) }}
-    
-    {% if error %}
-        {{ dump(error) }}
-    {% endif %}
-    
+
+    {{ form(form) }}
 {% endblock %}
 
 
 {% block javascripts %}
-    <script src="{{ asset('u2f.js') }}"></script>
+    <script src="{{ asset('bundles/mbarbeyu2fsecurity/u2f.js') }}"></script>
     <script type="text/javascript">
         setTimeout(function() {
             // A magic JS function that talks to the USB device. This function will keep polling for the USB device until it finds one.
@@ -27,7 +19,7 @@
                     // Or handle the error however you'd like. 
                     return;
                 }
-        
+
                 // On success process the data from USB device to send to the server
                 var registration_response = data;
                 

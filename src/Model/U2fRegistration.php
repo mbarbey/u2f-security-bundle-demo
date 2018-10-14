@@ -4,7 +4,7 @@
 namespace App\Model;
 
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Model\U2fRegistration\U2fRegistration as Base;
+use Mbarbey\U2fSecurityBundle\Model\U2fRegistration\U2fRegistration as Base;
 
 class U2fRegistration extends Base
 {

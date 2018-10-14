@@ -3,7 +3,7 @@
 
 namespace App\Model;
 
-use App\Model\U2fAuthentication\U2fAuthentication as Base;
+use Mbarbey\U2fSecurityBundle\Model\U2fAuthentication\U2fAuthentication as Base;
 
 class U2fAuthentication extends Base
 {

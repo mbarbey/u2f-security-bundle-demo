@@ -5,6 +5,7 @@
         "php": "^7.1.3",
         "ext-ctype": "*",
         "ext-iconv": "*",
+        "mbarbey/u2f-security-bundle": "dev-master",
         "samyoul/u2f-php-server": "^1.1",
         "symfony/apache-pack": "^1.0",
         "symfony/asset": "*",

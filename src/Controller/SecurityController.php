@@ -4,16 +4,15 @@ namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
-use Samyoul\U2F\U2FServer\U2FServer;
 use Symfony\Component\HttpFoundation\Request;
 use App\Form\U2fRegistrationType;
 use App\Model\U2fRegistration;
-use App\Entity\Key;
 use App\Model\U2fAuthentication;
 use App\Form\U2fAuthenticationType;
-use Samyoul\U2F\U2FServer\U2FException;
-use App\EventSubscriber\U2fSubscriber;
-use App\Service\U2fSecurity;
+use Mbarbey\U2fSecurityBundle\EventSubscriber\U2fSubscriber;
+use Mbarbey\U2fSecurityBundle\Service\U2fSecurity;
+use Symfony\Component\Form\FormError;
+use App\Entity\Key;
 
 class SecurityController extends AbstractController
 {
@@ -42,22 +41,19 @@ class SecurityController extends AbstractController
         $form = $this->createForm(U2fRegistrationType::class, $registration);
 
         $form->handleRequest($request);
-        $error = null;
         if ($form->isSubmitted() && $form->isValid()) {
             try {
-                $key = $service->validateRegistration($this->getUser(), $registration);
-                $key->setName($registration->getName())
-                    ->setUser($this->getUser());
+                $key = new Key();
+                $key->setName($registration->getName())->setUser($this->getUser());
+                $service->validateRegistration($this->getUser(), $registration, $key);
 
                 $em = $this->getDoctrine()->getManager();
                 $em->persist($key);
                 $em->flush();
-                $request->getSession()->remove('registrationRequest');
+
                 return $this->redirectToRoute('user_list');
             } catch (\Exception $e) {
-                $error = [
-                    'error' => $e
-                ];
+                $form->get('name')->addError(new FormError($e->getMessage()));
             }
         }
 
@@ -67,7 +63,6 @@ class SecurityController extends AbstractController
             'jsRequest' => $registrationData['request'],
             'jsSignatures' => $registrationData['signatures'],
             'form' => $form->createView(),
-            'error' => $error
         ));
     }
 
