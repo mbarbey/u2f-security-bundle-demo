@@ -5,26 +5,35 @@ login:
 logout:
     path: /logout
 
+register:
+    path: /register
+    controller: App\Controller\UserController::create
+
 home:
     path: /
     controller: App\Controller\HomeController::index
 
 user_list:
-    path: /users
+    path: /admin/users
     controller: App\Controller\UserController::index
 
-user_create:
-    path: /user/create
-    controller: App\Controller\UserController::create
+user_details:
+    path: /admin/user/{userId}/details
+    controller: App\Controller\UserController::details
+
+user_delete:
+    path: /admin/user/{userId}/delete
+    controller: App\Controller\UserController::delete
 
 user_register_u2f:
-    path: /user/register_key
+    path: /admin/key/register
     controller: App\Controller\SecurityController::u2fRegistration
 
+user_delete_u2f:
+    path: /admin/key/{keyId}/delete
+    controller: App\Controller\SecurityController::u2fDelete
+
 user_authenticate_u2f:
-    path: /user/authenticate_key
+    path: /login/two-factor
     controller: App\Controller\SecurityController::u2fAuthentication
 
-user_keys:
-    path: /user/{userId}
-    controller: App\Controller\UserKeyController::index

@@ -8,6 +8,8 @@ use Symfony\Component\HttpFoundation\Request;
 use App\Form\UserType;
 use App\Entity\User;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Security\Csrf\TokenStorage\SessionTokenStorage;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class UserController extends AbstractController
 {
@@ -35,11 +37,41 @@ class UserController extends AbstractController
             $em->persist($user);
             $em->flush();
 
-            return $this->redirectToRoute('user_list');
+            return $this->redirectToRoute('login');
         }
 
         return $this->render('user/edit.html.twig', [
             'form' => $form->createView()
         ]);
+    }
+
+    public function details($userId, UserRepository $r)
+    {
+        $user = $r->find($userId);
+
+        if (!$user) {
+            throw $this->createNotFoundException();
+        }
+
+        return $this->render('user/details.html.twig', [
+            'user' => $user,
+        ]);
+    }
+
+    public function delete(Request $request, $userId, UserRepository $r, TokenStorageInterface $storage)
+    {
+        $user = $r->find($userId);
+
+        if (!$user || $user->getId() != $this->getUser()->getId()) {
+            throw $this->createNotFoundException();
+        }
+
+        $em = $this->getDoctrine()->getManager();
+        $em->remove($user);
+        $em->flush();
+
+        $storage->setToken(null);
+
+        return $this->redirectToRoute('home');
     }
 }

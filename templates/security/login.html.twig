@@ -5,19 +5,27 @@
     <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
 {% endif %}
 
-<form action="{{ path('login') }}" method="post">
-    <label for="username">Username:</label>
-    <input type="text" id="username" name="_username" value="{{ last_username }}" />
+<div class="col-md-8 order-md-1">
+    <h4 class="mb-3">Login</h4>
 
-    <label for="password">Password:</label>
-    <input type="password" id="password" name="_password" />
+    <form action="{{ path('login') }}" method="post">
+        <div class="mb-3">
+            <label for="username">Username</label>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">@</span>
+                </div>
+                <input type="text" class="form-control" id="username" name="_username" placeholder="Username" value="{{ last_username }}" required>
+            </div>
+        </div>
 
-    {#
-        If you want to control the URL the user
-        is redirected to on success (more details below)
-        <input type="hidden" name="_target_path" value="/account" />
-    #}
+        <div class="mb-3">
+            <label for="password">Password</label>
+            <input type="password" class="form-control" id="password" name="_password" required>
+        </div>
 
-    <button type="submit">login</button>
-</form>
+        <hr class="mb-4">
+        <button class="btn btn-primary btn-lg btn-block" type="submit">Login</button>
+    </form>
+</div>
 {% endblock %}

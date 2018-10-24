@@ -1,36 +1,50 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1>U2F authentication</h1>
+<a href="{{ path('user_details', {'userId': app.user.id}) }}">Back</a>
+<h2>Key registration</h2>
 
-    {{ form(form) }}
+<div class="col-md-8 order-md-1">
+    {{ form_start(form) }}
+    <div class="mb-3">
+        {{ form_label(form.name) }}
+        {{ form_widget(form.name, {'attr': {'class': "form-control"}}) }}
+        {{ form_errors(form.name) }}
+    </div>
+    {{ form_rest(form) }}
+    <hr class="mb-4">
+    <button class="btn btn-primary btn-lg btn-block" type="submit">Register</button>
+    {{ form_end(form) }}
+</div>
 {% endblock %}
 
 
 {% block javascripts %}
+    {{ parent() }}
     <script src="{{ asset('bundles/mbarbeyu2fsecurity/u2f.js') }}"></script>
     <script type="text/javascript">
-        setTimeout(function() {
-            // A magic JS function that talks to the USB device. This function will keep polling for the USB device until it finds one.
-            u2f.register("{{ jsRequest.appId }}", [{version: "{{jsRequest.version}}", challenge: "{{ jsRequest.challenge }}"}], {{ jsSignatures|raw }}, function(data) {
-                // Handle returning error data
-                if(data.errorCode && data.errorCode != 0) {
-                    alert("registration failed with error: " + data.errorCode);
-                    // Or handle the error however you'd like. 
-                    return;
-                }
+        $(document).ready(function(){
+            var form = $('form');
+            var name = form.find('#{{ form.name.vars.id }}');
+            var response = form.find('#{{ form.response.vars.id }}');
 
-                // On success process the data from USB device to send to the server
-                var registration_response = data;
-                
-                // Get the form items so we can send data back to the server
-                var form = document.getElementsByTagName('form')[0];
-                var response = document.getElementById('{{ form.response.vars.id }}');
-                
-                // Fill and submit form.
-                response.value = JSON.stringify(registration_response);
-                form.submit();
+            form.on('submit', function(e) {
+                if (!name.val()) {
+                    e.preventDefault();
+                }
+                if (!response.val()) {
+                    e.preventDefault();
+                    u2f.register("{{ jsRequest.appId }}", [{version: "{{jsRequest.version}}", challenge: "{{ jsRequest.challenge }}"}], {{ jsSignatures|raw }}, function(data) {
+                        if(data.errorCode && data.errorCode != 0) {
+                            alert("registration failed with error: " + data.errorCode);
+                            return;
+                        }
+                        var registration_response = data;
+                        response.val(JSON.stringify(registration_response));
+                        form.submit();
+                    });
+                }
             });
-        }, 1000);
+        });
     </script>
 {% endblock %}

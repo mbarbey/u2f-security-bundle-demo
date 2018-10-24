@@ -1276,26 +1276,25 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/mbarbey/u2f-security-bundle.git",
-                "reference": "46c27655726fb75680ebfb7c8bed11f50283a9e5"
+                "reference": "34e12f61932f1cbc50eb1c91317f4a73b04681cb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mbarbey/u2f-security-bundle/zipball/46c27655726fb75680ebfb7c8bed11f50283a9e5",
-                "reference": "46c27655726fb75680ebfb7c8bed11f50283a9e5",
+                "url": "https://api.github.com/repos/mbarbey/u2f-security-bundle/zipball/34e12f61932f1cbc50eb1c91317f4a73b04681cb",
+                "reference": "34e12f61932f1cbc50eb1c91317f4a73b04681cb",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.1.3",
-                "samyoul/u2f-php-server": "^1.1"
+                "samyoul/u2f-php-server": "^1.1",
+                "symfony/doctrine-bridge": "^4.1",
+                "symfony/framework-bundle": "^4.1",
+                "symfony/security-bundle": "^4.1",
+                "symfony/validator": "^4.1"
             },
             "require-dev": {
-                "symfony/dependency-injection": "~3.4|~4.0",
-                "symfony/event-dispatcher": "~3.4|~4.0",
-                "symfony/http-foundation": "~3.4|~4.0",
-                "symfony/http-kernel": "~3.4|~4.0",
-                "symfony/routing": "~3.4|~4.0",
-                "symfony/security": "~3.4|~4.0",
-                "symfony/yaml": "~3.4|~4.0"
+                "phpunit/phpunit": "^7.4",
+                "symfony/phpunit-bridge": "^4.1",
+                "symfony/yaml": "^4.1"
             },
             "type": "symfony-bundle",
             "autoload": {
@@ -1325,7 +1324,7 @@
                 "u2f",
                 "yubikey"
             ],
-            "time": "2018-10-13T22:06:14+00:00"
+            "time": "2018-10-17T20:02:22+00:00"
         },
         {
             "name": "monolog/monolog",

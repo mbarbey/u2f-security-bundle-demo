@@ -13,6 +13,7 @@ use Mbarbey\U2fSecurityBundle\EventSubscriber\U2fSubscriber;
 use Mbarbey\U2fSecurityBundle\Service\U2fSecurity;
 use Symfony\Component\Form\FormError;
 use App\Entity\Key;
+use App\Repository\KeyRepository;
 
 class SecurityController extends AbstractController
 {
@@ -30,11 +31,26 @@ class SecurityController extends AbstractController
         ));
     }
 
+    public function u2fDelete(Request $request, $keyId,  KeyRepository $r)
+    {
+        $key = $r->find($keyId);
+
+        if (!$key || !$this->getUser()->getU2fKeys()->contains($key)) {
+            throw $this->createNotFoundException();
+        }
+
+        $em = $this->getDoctrine()->getManager();
+        $em->remove($key);
+        $em->flush();
+
+        return $this->redirectToRoute('user_details', ['userId' => $this->getUser()->getId()]);
+    }
+
     public function u2fRegistration(Request $request, U2fSecurity $service)
     {
         $canRegister = $service->canRegister($this->getUser(), $request->getSchemeAndHttpHost());
         if ($canRegister->isAborted()) {
-            return $this->redirectToRoute('user_list');
+            return $this->redirectToRoute('user_details', ['userId' => $this->getUser()->getId()]);
         }
 
         $registration = new U2fRegistration();
@@ -51,7 +67,7 @@ class SecurityController extends AbstractController
                 $em->persist($key);
                 $em->flush();
 
-                return $this->redirectToRoute('user_list');
+                return $this->redirectToRoute('user_details', ['userId' => $this->getUser()->getId()]);
             } catch (\Exception $e) {
                 $form->get('name')->addError(new FormError($e->getMessage()));
             }

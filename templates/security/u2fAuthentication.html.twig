@@ -1,17 +1,17 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1>U2F registration</h1>
+    <h1 class="cover-heading">Two factor authentication</h1>
+        <p class="lead">Insert your security key and press the button.</p>
+        <p class="lead">
+          <img src="{{ asset('key.png') }}" style="max-width: 300px"/>
+        </p>
+
+
+
     {{ form_start(form) }}
     {{ form_rest(form) }}
     {{ form_end(form) }}
-    
-    {{ dump(authenticationRequest) }}
-    
-    {% if error %}
-        {{ dump(error) }}
-    {% endif %}
-    
 {% endblock %}
 
 

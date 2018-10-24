@@ -22,7 +22,7 @@ class Key extends U2fKey
      * @ORM\ManyToOne(targetEntity="App\Entity\user", inversedBy="u2fKeys")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $user;
+    protected $user;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -35,25 +35,6 @@ class Key extends U2fKey
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    /**
-     * @return user|NULL
-     */
-    public function getUser(): ?user
-    {
-        return $this->user;
-    }
-
-    /**
-     * @param user $user
-     * @return self
-     */
-    public function setUser(?user $user): self
-    {
-        $this->user = $user;
-
-        return $this;
     }
 
     /**

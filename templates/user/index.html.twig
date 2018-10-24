@@ -1,24 +1,32 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-<table>
-    <thead>
-        <tr>
-            <th>Username</th>
-            <th>Keys</th>
-        </tr>
-    </thead>
-    <tbody>
+<h2>Users</h2>
+<div class="table-responsive">
+    <table class="table table-striped table-sm">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Username</th>
+                <th>Keys</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
         {% for user in users %}
             <tr>
+                <td>{{ user.id }}</td>
                 <td>{{ user.username }}</td>
-                <td>{{ user.u2fKeys|length }}{% if user.u2fKeys %}<a href="{{ path('user_keys', {'userId': user.id}) }}">See</a>{% endif %}</td>
+                <td>{{ user.u2fKeys|length }}</td>
+                <td>
+                    <a href="{{ path('user_details', {'userId': user.id}) }}" class="btn {% if app.user.id == user.id %}btn-primary{% else %}btn-outline-primary"{% endif %}">Details</a>
+                    {% if app.user.id == user.id %}
+                        <a href="{{ path('user_delete', {'userId': user.id}) }}" class="btn btn-danger">Delete</a>
+                    {% endif %}
+                </td>
             </tr>
         {% endfor %}
-    </tbody>
-</table>
-
-<a href="{{ path('user_create') }}">create</a>
-<a href="{{ path('user_register_u2f') }}">Register key</a>
-<a href="{{ path('user_authenticate_u2f') }}">Authenticate key</a>
+        </tbody>
+    </table>
+</div>
 {% endblock %}
