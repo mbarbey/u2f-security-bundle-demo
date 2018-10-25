@@ -6,6 +6,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Mbarbey\U2fSecurityBundle\Event\Authentication\U2fAuthenticationFailureEvent;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Mbarbey\U2fSecurityBundle\Event\Authentication\U2fPreAuthenticationEvent;
 
 class U2fSubscriber implements EventSubscriberInterface
 {
@@ -21,8 +22,16 @@ class U2fSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            U2fAuthenticationFailureEvent::getName() => 'onU2fAuthenticationFailure'
+            U2fAuthenticationFailureEvent::getName() => 'onU2fAuthenticationFailure',
+            U2fPreAuthenticationEvent::getName() => 'onPreAuthentication'
         ];
+    }
+
+    public function onPreAuthentication(U2fPreAuthenticationEvent $event)
+    {
+        if ($this->session->get('u2f_registration_error_counter', 0) >= 3) {
+            $this->flash->add('danger', "You failed to authenticate yourself and now you try to leave ? Mouahaha you are jailed here forever ! Or you can just logout and try again...");
+        }
     }
 
     public function onU2fAuthenticationFailure(U2fAuthenticationFailureEvent $event)

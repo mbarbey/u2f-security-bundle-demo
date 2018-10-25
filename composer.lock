@@ -1276,12 +1276,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/mbarbey/u2f-security-bundle.git",
-                "reference": "34e12f61932f1cbc50eb1c91317f4a73b04681cb"
+                "reference": "f7bd0c4dbd3a70ef34625ceb4860340a2d2bfb89"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mbarbey/u2f-security-bundle/zipball/34e12f61932f1cbc50eb1c91317f4a73b04681cb",
-                "reference": "34e12f61932f1cbc50eb1c91317f4a73b04681cb",
+                "url": "https://api.github.com/repos/mbarbey/u2f-security-bundle/zipball/f7bd0c4dbd3a70ef34625ceb4860340a2d2bfb89",
+                "reference": "f7bd0c4dbd3a70ef34625ceb4860340a2d2bfb89",
                 "shasum": ""
             },
             "require": {
@@ -1324,7 +1324,7 @@
                 "u2f",
                 "yubikey"
             ],
-            "time": "2018-10-17T20:02:22+00:00"
+            "time": "2018-10-25T09:53:05+00:00"
         },
         {
             "name": "monolog/monolog",

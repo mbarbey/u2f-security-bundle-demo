@@ -84,6 +84,8 @@ class SecurityController extends AbstractController
 
     public function u2fAuthentication(Request $request, U2fSecurity $service)
     {
+        $service->canAuthenticate($request->getSchemeAndHttpHost(), $this->getUser());
+
         $authentication = new U2fAuthentication();
         $form = $this->createForm(U2fAuthenticationType::class, $authentication);
 
