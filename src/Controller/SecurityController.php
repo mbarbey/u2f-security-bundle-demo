@@ -88,8 +88,7 @@ class SecurityController extends AbstractController
         $form = $this->createForm(U2fAuthenticationType::class, $authentication);
 
         $form->handleRequest($request);
-        $error = null;
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted()) {
             try {
                 $updatedKey = $service->validateAuthentication($this->getUser(), $authentication);
 
@@ -103,9 +102,7 @@ class SecurityController extends AbstractController
 
                 return $this->redirectToRoute('user_list');
             } catch (\Exception $e) {
-                $error = [
-                    'error' => $e
-                ];
+                $this->addFlash('danger', 'Authentication failed');
             }
         }
 
@@ -113,8 +110,7 @@ class SecurityController extends AbstractController
 
         return $this->render('security/u2fAuthentication.html.twig', array(
             'authenticationRequest' => $authenticationRequest,
-            'form' => $form->createView(),
-            'error' => $error
+            'form' => $form->createView()
         ));
     }
 }

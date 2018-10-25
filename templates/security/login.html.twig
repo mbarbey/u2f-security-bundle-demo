@@ -5,18 +5,13 @@
     <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
 {% endif %}
 
-<div class="col-md-8 order-md-1">
+<div class="col-md-8 offset-md-2">
     <h4 class="mb-3">Login</h4>
 
     <form action="{{ path('login') }}" method="post">
         <div class="mb-3">
             <label for="username">Username</label>
-            <div class="input-group">
-                <div class="input-group-prepend">
-                    <span class="input-group-text">@</span>
-                </div>
-                <input type="text" class="form-control" id="username" name="_username" placeholder="Username" value="{{ last_username }}" required>
-            </div>
+            <input type="text" class="form-control" id="username" name="_username" placeholder="Username" value="{{ last_username }}" required>
         </div>
 
         <div class="mb-3">

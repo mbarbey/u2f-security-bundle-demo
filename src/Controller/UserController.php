@@ -8,7 +8,6 @@ use Symfony\Component\HttpFoundation\Request;
 use App\Form\UserType;
 use App\Entity\User;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Symfony\Component\Security\Csrf\TokenStorage\SessionTokenStorage;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class UserController extends AbstractController
@@ -22,7 +21,7 @@ class UserController extends AbstractController
         ]);
     }
 
-    public function create(Request $request, UserPasswordEncoderInterface $encoder)
+    public function create(Request $request, UserPasswordEncoderInterface $encoder, UserRepository $r)
     {
         $user = new User();
         $form = $this->createForm(UserType::class, $user);
@@ -30,14 +29,22 @@ class UserController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $password = $encoder->encodePassword($user, $user->getPlainPassword());
-            $user->setPassword($password);
+            $existing = $r->findOneBy(['username' => $user->getUsername()]);
 
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($user);
-            $em->flush();
+            if ($existing) {
+                $this->addFlash('danger', 'This username is already taken.');
+            } else {
+                $password = $encoder->encodePassword($user, $user->getPlainPassword());
+                $user->setPassword($password);
 
-            return $this->redirectToRoute('login');
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($user);
+                $em->flush();
+
+                $this->addFlash('success', 'The account was successfully created.');
+
+                return $this->redirectToRoute('login');
+            }
         }
 
         return $this->render('user/edit.html.twig', [
@@ -71,6 +78,8 @@ class UserController extends AbstractController
         $em->flush();
 
         $storage->setToken(null);
+
+        $this->addFlash('success', 'The account was successfully deleted.');
 
         return $this->redirectToRoute('home');
     }

@@ -1,21 +1,26 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1 class="cover-heading">Two factor authentication</h1>
-        <p class="lead">Insert your security key and press the button.</p>
-        <p class="lead">
-          <img src="{{ asset('key.png') }}" style="max-width: 300px"/>
-        </p>
+    <div class="container">
+        <div class="row">
+            <div class="col align-self-center text-center">
+                <h1 class="cover-heading">Two factor authentication</h1>
+                    <p class="lead">Insert your security key and press the button.</p>
+                    <p class="lead">
+                      <img src="{{ asset('key.png') }}" style="max-width: 300px"/>
+                    </p>
 
-
-
-    {{ form_start(form) }}
-    {{ form_rest(form) }}
-    {{ form_end(form) }}
+                {{ form_start(form) }}
+                {{ form_rest(form) }}
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 
 {% block javascripts %}
+    {{ parent() }}
     <script src="{{ asset('bundles/mbarbeyu2fsecurity/u2f.js') }}"></script>
     <script type="text/javascript">
         setTimeout(function() {
@@ -26,6 +31,16 @@
                 if(data.errorCode && data.errorCode != 0) {
                     alert("Authentication failed with error: " + data.errorCode);
                     // Or handle the error however you'd like. 
+                    
+                    $.ajax({
+                        type: 'POST',
+                        url: window.location,
+                        data: $('form').serialize(),
+                        success: function(data) {
+                            $(data).find('.alert').insertAfter('header');
+                            console.log(data);
+                        }
+                    });
                     
                     return;
                 }

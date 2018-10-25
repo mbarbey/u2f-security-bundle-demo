@@ -1,19 +1,14 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-<div class="col-md-8 order-md-1">
+<div class="col-md-8 offset-md-2">
     <h4 class="mb-3">Register</h4>
 
     {{ form_start(form) }}
         <div class="mb-3">
             {{ form_label(form.username) }}
-            <div class="input-group">
-                <div class="input-group-prepend">
-                    <span class="input-group-text">@</span>
-                </div>
-                {{ form_widget(form.username, {'attr': {'class': "form-control"}}) }}
-                {{ form_errors(form.username) }}
-            </div>
+            {{ form_widget(form.username, {'attr': {'class': "form-control"}}) }}
+            {{ form_errors(form.username) }}
         </div>
 
         <div class="mb-3">
