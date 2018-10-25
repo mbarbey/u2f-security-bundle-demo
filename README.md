@@ -6,7 +6,8 @@ This repository is a fully functionnal demo for the bundle [mbarbey/u2f-security
 
 The only things you need to do is :
 1) download the repository
-2) create a vhost with the folowwing content :
+2) Do a composer install
+3) create a vhost with the folowwing content :
   ```
   <VirtualHost *:443>
     ServerName u2f.local
@@ -21,7 +22,7 @@ The only things you need to do is :
   
   _Tips: The self signed certificates provided in the directory "ssl" are already configured for the domaine name "u2f.local" so you don't need to generate yourself your own certificate. But if you want, you can still do it yourself and use another domain name._
 
-3) go to https://u2f.local and play with your U2F key
+4) go to https://u2f.local and play with your U2F key
 
 ## 2. Functionalities in this demo
 
