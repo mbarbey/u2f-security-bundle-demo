@@ -17,7 +17,9 @@ The only things you need to do is :
 	SSLCertificateKeyFile "/var/www/u2f/ssl/u2f.local.key"
   </VirtualHost>
   ```
-  Don't forget to adapt the paths
+  Don't forget to adapt the paths.
+  
+  _Tips: The self signed certificates provided in the directory "ssl" are already configured for the domaine name "u2f.local" so you don't need to generate yourself your own certificate. But if you want, you can still do it yourself and use another domain name._
 
 3) go to https://u2f.local and play with your U2F key
 
