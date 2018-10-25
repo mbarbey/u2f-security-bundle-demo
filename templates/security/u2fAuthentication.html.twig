@@ -29,9 +29,6 @@
                 
                 // Handle returning error data
                 if(data.errorCode && data.errorCode != 0) {
-                    alert("Authentication failed with error: " + data.errorCode);
-                    // Or handle the error however you'd like. 
-                    
                     $.ajax({
                         type: 'POST',
                         url: window.location,
