@@ -30,6 +30,6 @@ The only things you need to do is :
 - [X] Register one or multiple security keys to account
 - [X] Automatically force user to use a security key after login if the user has at least one linked ot it account
 - [X] Detect when the user fail to authenticate with it key 3 times
-- [ ] Detect when the user try to leave the U2F authentication page without being successfully authenticated
+- [X] Detect when the user try to leave the U2F authentication page without being successfully authenticated
 - [ ] Prevent a user from using a key even if there is some keys linked to the account
 - [ ] Prevent a user from registering a key
