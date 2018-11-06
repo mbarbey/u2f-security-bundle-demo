@@ -19,9 +19,11 @@
                 <td>{{ user.username }}</td>
                 <td>{{ user.u2fKeys|length }}</td>
                 <td>
-                    <a href="{{ path('user_details', {'userId': user.id}) }}" class="btn {% if app.user.id == user.id %}btn-primary{% else %}btn-outline-primary"{% endif %}">Details</a>
+                    <a href="{{ path('user_details', {'userId': user.id}) }}" class="btn {% if app.user.id == user.id %}btn-primary{% else %}btn-outline-primary"{% endif %}">Keys</a>
                     {% if app.user.id == user.id %}
-                        <a href="{{ path('user_delete', {'userId': user.id}) }}" class="btn btn-danger">Delete</a>
+                        <a href="{{ path('user_toggle_canregister') }}" class="btn btn-warning">{% if user.canRegisterKey %}Prevent{% else %}Allow{% endif %} registering keys</a>
+                        <a href="{{ path('user_toggle_canauthenticate') }}" class="btn btn-warning">{% if user.canAuthenticateKey %}Prevent{% else %}Allow{% endif %} authenticate with keys</a>
+                        <a href="{{ path('user_delete', {'userId': user.id}) }}" class="btn btn-danger">Delete account</a>
                     {% endif %}
                 </td>
             </tr>

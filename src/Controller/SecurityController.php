@@ -48,11 +48,18 @@ class SecurityController extends AbstractController
 
     public function u2fRegistration(Request $request, U2fSecurity $service)
     {
+        /*
+         * We check if there is any listener somewhere which have an objection for the current user registering a new key
+         */
         $canRegister = $service->canRegister($this->getUser(), $request->getSchemeAndHttpHost());
         if ($canRegister->isAborted()) {
-            return $this->redirectToRoute('user_details', ['userId' => $this->getUser()->getId()]);
+            $this->addFlash('warning', $canRegister->getReason());
+            return $this->redirectToRoute('user_register_u2f_denied');
         }
 
+        /*
+         * The user is allowed to register a key :-)
+         */
         $registration = new U2fRegistration();
         $form = $this->createForm(U2fRegistrationType::class, $registration);
 
@@ -82,9 +89,19 @@ class SecurityController extends AbstractController
         ));
     }
 
+    public function u2fRegistrationDenied()
+    {
+        return $this->render('security/u2fRegistrationDenied.html.twig');
+    }
+
     public function u2fAuthentication(Request $request, U2fSecurity $service)
     {
-        $service->canAuthenticate($request->getSchemeAndHttpHost(), $this->getUser());
+        $canAuthenticate = $service->canAuthenticate($request->getSchemeAndHttpHost(), $this->getUser());
+        if ($canAuthenticate->isAborted()) {
+            $service->stopRequestingAuthentication();
+            $this->addFlash('warning', 'Your connection was not secured by a security key');
+            return $this->redirectToRoute('user_list');
+        }
 
         $authentication = new U2fAuthentication();
         $form = $this->createForm(U2fAuthenticationType::class, $authentication);

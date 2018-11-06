@@ -40,6 +40,16 @@ class User extends U2fUser implements UserInterface, \Serializable
     private $password;
 
     /**
+     * @ORM\Column(type="boolean")
+     */
+    private $canRegisterKey = true;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $canAuthenticateKey = true;
+
+    /**
      * @return int
      */
     public function getId(): ?int
@@ -111,6 +121,44 @@ class User extends U2fUser implements UserInterface, \Serializable
     public function setPassword(string $password = null): self
     {
         $this->password = $password;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getCanRegisterKey(): bool
+    {
+        return $this->canRegisterKey;
+    }
+
+    /**
+     * @param bool $canRegisterKey
+     * @return self
+     */
+    public function setCanRegisterKey(bool $canRegisterKey): self
+    {
+        $this->canRegisterKey = $canRegisterKey;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getCanAuthenticateKey(): bool
+    {
+        return $this->canAuthenticateKey;
+    }
+
+    /**
+     * @param bool $canAuthenticateKey
+     * @return self
+     */
+    public function setCanAuthenticateKey(bool $canAuthenticateKey): self
+    {
+        $this->canAuthenticateKey = $canAuthenticateKey;
 
         return $this;
     }

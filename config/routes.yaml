@@ -21,6 +21,14 @@ user_details:
     path: /admin/user/{userId}/details
     controller: App\Controller\UserController::details
 
+user_toggle_canregister:
+    path: /admin/user-toggle/can-register
+    controller: App\Controller\UserController::toggleCanRegister
+
+user_toggle_canauthenticate:
+    path: /admin/user-toggle/can-authenticate
+    controller: App\Controller\UserController::toggleCanAuthenticate
+
 user_delete:
     path: /admin/user/{userId}/delete
     controller: App\Controller\UserController::delete
@@ -29,6 +37,10 @@ user_register_u2f:
     path: /admin/key/register
     controller: App\Controller\SecurityController::u2fRegistration
 
+user_register_u2f_denied:
+    path: /admin/key/register/denied
+    controller: App\Controller\SecurityController::u2fRegistrationDenied
+
 user_delete_u2f:
     path: /admin/key/{keyId}/delete
     controller: App\Controller\SecurityController::u2fDelete
@@ -36,4 +48,3 @@ user_delete_u2f:
 user_authenticate_u2f:
     path: /login/two-factor
     controller: App\Controller\SecurityController::u2fAuthentication
-

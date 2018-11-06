@@ -65,6 +65,30 @@ class UserController extends AbstractController
         ]);
     }
 
+    public function toggleCanRegister()
+    {
+        $user = $this->getUser();
+
+        $user->setCanRegisterKey(!$user->getCanRegisterKey());
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($user);
+        $em->flush();
+
+        return $this->redirectToRoute('user_list');
+    }
+
+    public function toggleCanAuthenticate()
+    {
+        $user = $this->getUser();
+
+        $user->setCanAuthenticateKey(!$user->getCanAuthenticateKey());
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($user);
+        $em->flush();
+
+        return $this->redirectToRoute('user_list');
+    }
+
     public function delete(Request $request, $userId, UserRepository $r, TokenStorageInterface $storage)
     {
         $user = $r->find($userId);

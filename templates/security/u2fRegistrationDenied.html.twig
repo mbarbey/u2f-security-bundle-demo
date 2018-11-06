@@ -1,0 +1,10 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<a href="{{ path('user_details', {'userId': app.user.id}) }}">Back</a>
+<h2>Key registration</h2>
+
+<div class="col-md-8 order-md-1">
+    <p>You are not allowed to register a security key.</p>
+</div>
+{% endblock %}

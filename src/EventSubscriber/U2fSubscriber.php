@@ -9,6 +9,9 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Mbarbey\U2fSecurityBundle\Event\Registration\U2fPreRegistrationEvent;
+use App\Entity\User;
+use Mbarbey\U2fSecurityBundle\Event\Authentication\U2fPreAuthenticationEvent;
 
 class U2fSubscriber implements EventSubscriberInterface
 {
@@ -27,7 +30,9 @@ class U2fSubscriber implements EventSubscriberInterface
     {
         return [
             U2fAuthenticationFailureEvent::getName() => 'onU2fAuthenticationFailure',
-            KernelEvents::REQUEST => 'onKernelRequest'
+            KernelEvents::REQUEST => 'onKernelRequest',
+            U2fPreRegistrationEvent::getName() => 'onU2fPreRegistration',
+            U2fPreAuthenticationEvent::getName() => 'onU2fPreAuthentication'
         ];
     }
 
@@ -49,6 +54,36 @@ class U2fSubscriber implements EventSubscriberInterface
     {
         if ($event->getFailureCounter() >= 3) {
             $this->flash->add('danger', "You have failed to fully authenticate 3 times or more. An email has been sent to the owner of this account for security purpose. (Just kidding, I am a demo, I don't send emails)");
+        }
+    }
+
+    public function onU2fPreRegistration(U2fPreRegistrationEvent $event)
+    {
+        $user = $event->getUser();
+
+        /*
+         * Here we simply deny the registration of a key based on a property of the user. In real case, you will use
+         * some more complex conditions but the logic is still the same.
+         */
+
+        /** @var $user \App\Entity\User */
+        if ($user instanceof User && !$user->getCanRegisterKey()) {
+            $event->abort('You shall not pass !');
+        }
+    }
+
+    public function onU2fPreAuthentication(U2fPreAuthenticationEvent $event)
+    {
+        $user = $event->getUser();
+
+        /*
+         * Here we simply deny the registration of a key based on a property of the user. In real case, you will use
+         * some more complex conditions but the logic is still the same.
+         */
+
+        /** @var $user \App\Entity\User */
+        if ($user instanceof User && !$user->getCanAuthenticateKey()) {
+            $event->abort();
         }
     }
 }
