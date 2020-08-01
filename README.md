@@ -2,8 +2,6 @@
 
 This repository is a fully functionnal demo for the bundle [mbarbey/u2f-security-bundle](https://github.com/mbarbey/u2f-security-bundle).
 
-You can see a live demo here : https://u2f-security-bundle-demo.barbey-family.ch
-
 ## 1. Installation
 
 The only things you need to do is :
